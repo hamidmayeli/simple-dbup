@@ -5,10 +5,19 @@ using MySqlX.XDevAPI.Common;
 
 namespace SimpleDbUp;
 
-public class EmptyClass
+public class Worker
 {
-    public static void Run(string connectionString, string scriptsPath)
+    public static void Run(
+        string connectionString,
+        string scriptsPath,
+        bool nonTransactional
+        )
     {
+        Console.WriteLine("Running the upgrade using" +
+            $"{Environment.NewLine}\tConnection String: {connectionString.Length} chars" +
+            $"{Environment.NewLine}\tScripts Path: {new DirectoryInfo(scriptsPath).Name}" +
+            $"{Environment.NewLine}\tNon transactional: {nonTransactional}");
+
         try
         {
             EnsureDatabase.For.MySqlDatabase(connectionString);
@@ -18,7 +27,7 @@ public class EmptyClass
             ExitWithError(exception);
         }
 
-        var upgrade = DeployChanges.To
+        var builder = DeployChanges.To
             .MySqlDatabase(connectionString)
             .WithScriptsFromFileSystem(
                 scriptsPath,
@@ -28,8 +37,14 @@ public class EmptyClass
                     ScriptType = DbUp.Support.ScriptType.RunOnce
                 })
             .LogToConsole()
-            .LogScriptOutput()
-            .Build();
+            .LogScriptOutput();
+
+        if (nonTransactional)
+            builder.WithTransactionPerScript();
+        else
+            builder.WithTransaction();
+
+        var upgrade = builder.Build();
 
         var result = upgrade.PerformUpgrade();
 
