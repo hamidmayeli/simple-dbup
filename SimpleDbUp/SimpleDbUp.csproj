@@ -9,8 +9,10 @@
 
   <ItemGroup>
     <None Remove="System.CommandLine" />
+    <None Remove="dbup-mysql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="dbup-mysql" Version="5.0.10" />
   </ItemGroup>
 </Project>

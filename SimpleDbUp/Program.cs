@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using SimpleDbUp;
 
 var command = new RootCommand();
 
@@ -12,11 +13,11 @@ connectionString.IsRequired = true;
 command.AddOption(connectionString);
 command.AddOption(scriptDirectory);
 
-command.SetHandler((conStr, scripts) => Console.WriteLine((conStr + "-" + scripts) ?? "Null"), connectionString, scriptDirectory);
+command.SetHandler(EmptyClass.Run, connectionString, scriptDirectory);
 
 var parser = new CommandLineBuilder(command)
     .UseHelp()
     .UseDefaults()
     .Build();
 
-await parser.InvokeAsync(args);
+parser.Invoke(args);
