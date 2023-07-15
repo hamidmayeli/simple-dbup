@@ -1,0 +1,6 @@
+Dockerfile*
+artifacts/
+.vs
+.vscode
+bin/
+obj/
