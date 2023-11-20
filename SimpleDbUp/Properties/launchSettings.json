@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SimpleDbUp": {
+      "commandName": "Project",
+      "commandLineArgs": "-C the-c -c \"first\" -c \"second\" -cn 1 -cn 2"
+    }
+  }
+}

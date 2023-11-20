@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine3.18 as root
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.18 as root
 
 WORKDIR /sln
 
@@ -16,7 +16,7 @@ RUN cd SimpleDbUp && \
     # --no-self-contained \
       -o /publish
 
-FROM mcr.microsoft.com/dotnet/runtime:7.0-alpine3.18 as release
+FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine3.18 as release
 
 COPY --from=root /publish /app
 

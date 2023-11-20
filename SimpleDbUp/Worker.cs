@@ -1,7 +1,5 @@
 ﻿using DbUp;
-using DbUp.Builder;
 using DbUp.Engine;
-using MySqlX.XDevAPI.Common;
 
 namespace SimpleDbUp;
 
@@ -10,13 +8,25 @@ public class Worker
     public static void Run(
         string connectionString,
         string scriptsPath,
-        bool nonTransactional
+        bool nonTransactional,
+        IEnumerable<string> commands,
+        IEnumerable<string> commandNames
         )
     {
         Console.WriteLine("Running the upgrade using" +
             $"{Environment.NewLine}\tConnection String: {connectionString.Length} chars" +
             $"{Environment.NewLine}\tScripts Path: {new DirectoryInfo(scriptsPath).Name}" +
-            $"{Environment.NewLine}\tNon transactional: {nonTransactional}");
+            $"{Environment.NewLine}\tNon transactional: {nonTransactional}" +
+            $"{Environment.NewLine}\tCommands len: {commands.Count()}" +
+            $"{Environment.NewLine}\tCommand names: {string.Join(", ", commandNames)}");
+
+        if(commandNames.Count() != commands.Count())
+        {
+            Console.WriteLine("Invalid count of commands and their names");
+            Environment.Exit(1);
+        }
+
+        var commandList = commandNames.Zip(commands).ToList();
 
         try
         {
@@ -38,6 +48,8 @@ public class Worker
                 })
             .LogToConsole()
             .LogScriptOutput();
+
+        commandList.ForEach(x => builder.WithScript(x.First, x.Second));
 
         if (nonTransactional)
             builder.WithTransactionPerScript();
